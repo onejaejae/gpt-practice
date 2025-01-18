@@ -14,6 +14,7 @@ import {
 } from '../decorator/resource-owner.decorator';
 import { UserRole } from 'src/entities/user/user.interface';
 import { ChatHistoryRepository } from 'src/modules/chat-history/repository/chat-history.repository';
+import { FeedbackRepository } from 'src/modules/feedback/repository/feedback.repository';
 
 @Injectable()
 export class ResourceOwnerGuard implements CanActivate {
@@ -21,6 +22,7 @@ export class ResourceOwnerGuard implements CanActivate {
     private readonly reflector: Reflector,
     private readonly threadRepository: ThreadRepository,
     private readonly chatHistoryRepository: ChatHistoryRepository,
+    private readonly feedbackRepository: FeedbackRepository,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -35,8 +37,6 @@ export class ResourceOwnerGuard implements CanActivate {
     const user = request.user;
     if (!user) return false;
 
-    console.log('user', user);
-
     if (user.role === UserRole.Admin) return true;
 
     switch (resourceType) {
@@ -48,7 +48,7 @@ export class ResourceOwnerGuard implements CanActivate {
         return resource.userId === user.id;
       }
 
-      case ResourceType.Feedback: {
+      case ResourceType.CreateFeedback: {
         const resourceId = request.params.chatHistoryId;
         const resource =
           await this.chatHistoryRepository.findOneWithOmitNotJoinedProps(
@@ -61,6 +61,14 @@ export class ResourceOwnerGuard implements CanActivate {
         if (!resource) throw new NotFoundException('Chat history not found');
 
         return resource.Thread.userId === user.id;
+      }
+
+      case ResourceType.GetFeedbacks: {
+        const resourceId = request.params.feedbackId;
+        const resource =
+          await this.feedbackRepository.findByIdOrThrow(resourceId);
+
+        return resource.userId === user.id;
       }
 
       default:

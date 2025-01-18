@@ -3,9 +3,14 @@ import { ThreadController } from './thread.controller';
 import { ThreadService } from './thread.service';
 import { ThreadRepositoryModule } from './repository/thread-repository.module';
 import { ChatHistoryRepositoryModule } from '../chat-history/repository/chat-history-repository.module';
+import { FeedbackRepositoryModule } from '../feedback/repository/feedback-repository.module';
 
 @Module({
-  imports: [ThreadRepositoryModule, ChatHistoryRepositoryModule],
+  imports: [
+    ThreadRepositoryModule,
+    ChatHistoryRepositoryModule,
+    FeedbackRepositoryModule,
+  ],
   controllers: [ThreadController],
   providers: [ThreadService],
 })
