@@ -117,6 +117,12 @@ $ npm run docker:down:local-test
 
 <br>
 
+## API 명세서
+
+https://documenter.getpostman.com/view/13091019/2sAYQamBnB
+
+<br>
+
 ## 설계 및 패턴
 
 ### 주요 설계 특징
