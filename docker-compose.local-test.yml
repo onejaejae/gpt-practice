@@ -1,7 +1,7 @@
 services:
   db-test:
     container_name: gpt-db-test
-    image: postgres:15
+    image: postgres:15.8
     ports:
       - '54320:5432'
     environment:
