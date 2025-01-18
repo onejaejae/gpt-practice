@@ -8,7 +8,6 @@ export const ResourceKey = (key: ResourceType) =>
 
 export const ResourceType = {
   Thread: 'THREAD',
-  CreateFeedback: 'CREATE_FEEDBACK',
-  GetFeedbacks: 'GET_FEEDBACKS',
+  Feedback: 'FEEDBACK',
 } as const;
 export type ResourceType = Union<typeof ResourceType>;

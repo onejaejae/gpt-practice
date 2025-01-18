@@ -2,16 +2,37 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { FeedbackRepository } from './repository/feedback.repository';
 import { User } from 'src/entities/user/user.entity';
 import { CreateFeedbackBody } from './dto/req/createFeedback.body';
+import { UserRole } from 'src/entities/user/user.interface';
+import { FeedbackType, GetFeedbacksQuery } from './dto/req/getFeedbacks.query';
 import { Feedback } from 'src/entities/feedback/feedback.entity';
+import { FindOptionsWhere } from 'typeorm';
+import { FeedBackStatus } from 'src/entities/feedback/feedback.interface';
 
 @Injectable()
 export class FeedbackService {
   constructor(private readonly feedbackRepository: FeedbackRepository) {}
 
-  async getFeedback(userId: User['id'], feedbackId: Feedback['id']) {
-    return this.feedbackRepository.findOneByFilters({
+  async getFeedbacks(
+    userId: User['id'],
+    role: UserRole,
+    query: GetFeedbacksQuery,
+  ) {
+    const whereFilter: FindOptionsWhere<Feedback> = {
       userId,
-      id: feedbackId,
+    };
+
+    if (query.feedbackType) {
+      whereFilter.isPositive = query.feedbackType === FeedbackType.Positive;
+    }
+
+    if (role === UserRole.User) {
+      return this.feedbackRepository.findMany(whereFilter, {
+        createdAt: query.sortOption,
+      });
+    }
+
+    return this.feedbackRepository.findMany(whereFilter, {
+      createdAt: query.sortOption,
     });
   }
 
@@ -30,6 +51,13 @@ export class FeedbackService {
     const feedback = body.toEntity();
     feedback.userId = userId;
 
+    return this.feedbackRepository.save(feedback);
+  }
+
+  async updateFeedback(feedbackId: Feedback['id']) {
+    const feedback = await this.feedbackRepository.findByIdOrThrow(feedbackId);
+
+    feedback.status = FeedBackStatus.Resolved;
     return this.feedbackRepository.save(feedback);
   }
 }

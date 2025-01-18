@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { AccessTokenGuard } from 'src/core/guard/accessToken.guard';
 import { RequestedUser } from 'src/core/decorator/user.decorator';
 import { User } from 'src/entities/user/user.entity';
@@ -9,6 +19,10 @@ import {
 } from 'src/core/decorator/resource-owner.decorator';
 import { ResourceOwnerGuard } from 'src/core/guard/resourceOwner.guard';
 import { CreateFeedbackBody } from './dto/req/createFeedback.body';
+import { GetFeedbacksQuery } from './dto/req/getFeedbacks.query';
+import { RolesGuard } from 'src/core/guard/role.guard';
+import { Roles } from 'src/core/decorator/role.decorator';
+import { UserRole } from 'src/entities/user/user.interface';
 import { Feedback } from 'src/entities/feedback/feedback.entity';
 
 @UseGuards(AccessTokenGuard)
@@ -16,17 +30,15 @@ import { Feedback } from 'src/entities/feedback/feedback.entity';
 export class FeedbackController {
   constructor(private readonly service: FeedbackService) {}
 
-  @ResourceKey(ResourceType.GetFeedbacks)
-  @UseGuards(ResourceOwnerGuard)
-  @Get('/:feedbackId')
-  async getFeedback(
+  @Get('/')
+  async getFeedbacks(
     @RequestedUser() user: User,
-    @Param('feedbackId') feedbackId: Feedback['id'],
+    @Query() query: GetFeedbacksQuery,
   ) {
-    return this.service.getFeedback(user.id, feedbackId);
+    return this.service.getFeedbacks(user.id, user.role, query);
   }
 
-  @ResourceKey(ResourceType.CreateFeedback)
+  @ResourceKey(ResourceType.Feedback)
   @UseGuards(ResourceOwnerGuard)
   @Post('/')
   async createFeedback(
@@ -34,5 +46,14 @@ export class FeedbackController {
     @Body() body: CreateFeedbackBody,
   ) {
     return this.service.createFeedback(user.id, body);
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.Admin)
+  @Patch('/:feedbackId')
+  async updateFeedback(
+    @Param('feedbackId', ParseUUIDPipe) feedbackId: Feedback['id'],
+  ) {
+    return this.service.updateFeedback(feedbackId);
   }
 }

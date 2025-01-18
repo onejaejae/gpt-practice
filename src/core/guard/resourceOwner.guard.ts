@@ -48,7 +48,7 @@ export class ResourceOwnerGuard implements CanActivate {
         return resource.userId === user.id;
       }
 
-      case ResourceType.CreateFeedback: {
+      case ResourceType.Feedback: {
         const resourceId = request.params.chatHistoryId;
         const resource =
           await this.chatHistoryRepository.findOneWithOmitNotJoinedProps(
@@ -61,14 +61,6 @@ export class ResourceOwnerGuard implements CanActivate {
         if (!resource) throw new NotFoundException('Chat history not found');
 
         return resource.Thread.userId === user.id;
-      }
-
-      case ResourceType.GetFeedbacks: {
-        const resourceId = request.params.feedbackId;
-        const resource =
-          await this.feedbackRepository.findByIdOrThrow(resourceId);
-
-        return resource.userId === user.id;
       }
 
       default:

@@ -12,7 +12,11 @@ export class Feedback extends UuidEntity {
   @Column({ type: 'uuid' })
   chatHistoryId: string;
 
-  @Column({ type: 'enum', enum: FeedBackStatus })
+  @Column({
+    type: 'enum',
+    enum: FeedBackStatus,
+    default: FeedBackStatus.Pending,
+  })
   status: FeedBackStatus;
 
   @Column({ type: 'boolean', default: true })
