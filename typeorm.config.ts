@@ -1,5 +1,7 @@
 import { config } from 'dotenv';
 import { ChatHistory } from 'src/entities/chat-history/chat-history.entity';
+import { Feedback } from 'src/entities/feedback/feedback.entity';
+import { Thread } from 'src/entities/thread/thread.entity';
 import { User } from 'src/entities/user/user.entity';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { SeederOptions } from 'typeorm-extension';
@@ -17,7 +19,7 @@ const configDataSource = async () => {
     username: process.env.DB_USER_NAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
-    entities: [User, ChatHistory],
+    entities: [User, ChatHistory, Feedback, Thread],
     namingStrategy: new SnakeNamingStrategy(),
     synchronize: false,
     logging: true,
