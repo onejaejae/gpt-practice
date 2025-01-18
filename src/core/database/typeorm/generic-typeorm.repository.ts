@@ -12,6 +12,9 @@ import {
 } from 'typeorm';
 import { UuidEntity } from './base.entity';
 import { OmitNotJoinedProps, OmitUppercaseProps } from './typeorm.interface';
+import { PaginationRequest } from 'libs/common/pagination/pagination.request';
+import { PaginationResponse } from 'libs/common/pagination/pagination.response';
+import { PaginationBuilder } from 'libs/common/pagination/pagination.builder';
 
 export class GenericTypeOrmRepository<
   T extends UuidEntity,
@@ -22,6 +25,32 @@ export class GenericTypeOrmRepository<
     queryRunner: QueryRunner,
   ) {
     super(target, manager, queryRunner);
+  }
+
+  async paginateWithJoin<R extends FindOptionsRelations<T>>(
+    pagination: PaginationRequest,
+    findOptionsRelations: R,
+    findOptionsWhere: FindOptionsWhere<T>,
+    orderOptions: FindOptionsOrder<T>,
+  ): Promise<PaginationResponse<OmitNotJoinedProps<T, R>>> {
+    const { limit, page } = pagination;
+
+    const options: FindManyOptions<T> = {
+      take: limit,
+      skip: (page - 1) * limit,
+      where: findOptionsWhere,
+      order: orderOptions,
+      relations: findOptionsRelations,
+    };
+
+    const [data, total] = await this.findAndCount(options);
+
+    return new PaginationBuilder<OmitNotJoinedProps<T, R>>()
+      .setData(data as OmitNotJoinedProps<T, R>[])
+      .setPage(page)
+      .setLimit(limit)
+      .setTotalCount(total)
+      .build();
   }
 
   async findOneWithOmitNotJoinedProps<R extends FindOptionsRelations<T>>(
