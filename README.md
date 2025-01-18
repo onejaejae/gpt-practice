@@ -8,36 +8,82 @@
 - Docker Compose
 - Jest
 
-## 프로젝트 실행 방법
+## 로컬 프로젝트 실행 방법
 
-1. 해당 명령어를 실행해주세요
-
-```
-npm run docker:up
-```
-
-2. 실행 상태 확인
+1. 해당 명령어를 통해 local-db를 실행합니다.
 
 ```
-docker-compose ps
+npm run docker:up:local
 ```
 
-3. 웹 접속 확인
+2. dotenv 폴더 및 env 파일 생성
 
-http://localhost:3000
+![alt text](image.png)
+
+```
+- 루트 폴더에 dotenv 폴더를 생성해주세요.
+- dotenv 폴더 내에 .env.local 파일을 생성해주세요.
+```
+
+env 파일 내용은 아래와 같습니다.
+
+```
+# APP
+PORT=3000
+BASE_URL=http://localhost
+
+# DB
+DB_USER_NAME=postgres
+DB_DATABASE=postgres
+DB_PASSWORD=postgres
+DB_PORT=5432
+DB_HOST=localhost
+
+# JWT
+JWT_SECRET=ASDJASDASDJLBDS213123
+JWT_ACCESS_TOKEN_EXPIRES_IN=30m
+JWT_REFRESH_TOKEN_EXPIRES_IN=14d
+
+# OPENAI
+OPENAI_API_KEY=키를 입력해주세요
+```
+
+3. 서버 실행
+
+```
+npm run start:local
+```
 
 4. docker-compose 중지
 
 ```
-npm run docker:down
+npm run docker:down:local
 ```
 
 ## 테스트 계정
 
-- 테스트 계정은 위 방법으로 docker-compose 실행 시 자동으로 생성됩니다.
+- npm run seed 명령어를 통해 테스트 계정을 생성합니다.
 
 ```
-email: 'test@test.com'
+npm run seed
+```
+
+<br>
+
+- 일반 계정
+
+```
+email: 'test1@test.com'
+password: 'test'
+
+email: 'test3@test.com'
+password: 'test'
+```
+
+- 관리자 계정
+
+```
+email: 'test2@test.com'
 password: 'test'
 ```
 
@@ -71,7 +117,7 @@ $ npm run docker:down:local-test
 
 A. 모듈화 (Modularity)
 
-- 각 기능별로 독립적인 모듈로 분리 (Auth, Diary, Asset, AssetToDiary)
+- 각 기능별로 독립적인 모듈로 분리
 - 기능 확장과 유지보수가 용이
 - 높은 응집도와 낮은 결합도
 
