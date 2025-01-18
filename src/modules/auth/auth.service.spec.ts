@@ -16,23 +16,43 @@ import { SignInBody } from './dto/req/signIn.body';
 import { UserFactory } from 'test/factory/user.factory';
 import { UserRole } from 'src/entities/user/user.interface';
 import { Encrypt } from 'libs/util/encrypt';
+import { FeedbackRepositoryModule } from '../feedback/repository/feedback-repository.module';
+import { FeedbackRepository } from '../feedback/repository/feedback.repository';
+import { ThreadRepositoryModule } from '../thread/repository/thread-repository.module';
+import { ThreadRepository } from '../thread/repository/thread.repository';
+import { ChatHistoryRepositoryModule } from '../chat-history/repository/chat-history-repository.module';
+import { ChatHistoryRepository } from '../chat-history/repository/chat-history.repository';
 
 let app: INestApplication;
 let service: AuthService;
 let userRepository: UserRepository;
+let feedbackRepository: FeedbackRepository;
+let threadRepository: ThreadRepository;
+let chatHistoryRepository: ChatHistoryRepository;
 let entityManager: EntityManager;
 
 beforeAll(async () => {
   initializeTransactionalContext();
 
   const module: TestingModule = await Test.createTestingModule({
-    imports: [CoreModule, AuthModule],
+    imports: [
+      CoreModule,
+      AuthModule,
+      FeedbackRepositoryModule,
+      ThreadRepositoryModule,
+      ChatHistoryRepositoryModule,
+    ],
   }).compile();
 
   app = module.createNestApplication();
   await app.init();
 
   userRepository = module.get<UserRepository>(UserRepository);
+  feedbackRepository = module.get<FeedbackRepository>(FeedbackRepository);
+  threadRepository = module.get<ThreadRepository>(ThreadRepository);
+  chatHistoryRepository = module.get<ChatHistoryRepository>(
+    ChatHistoryRepository,
+  );
 
   service = module.get<AuthService>(AuthService);
 });
@@ -43,6 +63,9 @@ describe('AuthService', () => {
   });
 
   beforeEach(async () => {
+    await chatHistoryRepository.deleteAllForTest();
+    await threadRepository.deleteAllForTest();
+    await feedbackRepository.deleteAllForTest();
     await userRepository.deleteAllForTest();
   });
 

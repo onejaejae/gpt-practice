@@ -41,11 +41,8 @@ export class ResourceOwnerGuard implements CanActivate {
 
     switch (resourceType) {
       case ResourceType.Thread: {
-        const resourceId = request.params.threadId;
-        const resource =
-          await this.threadRepository.findByIdOrThrow(resourceId);
-
-        return resource.userId === user.id;
+        const resourceId = request.query.userId;
+        return resourceId === user.id;
       }
 
       case ResourceType.Feedback: {

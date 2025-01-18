@@ -1,6 +1,7 @@
-import { IsEnum, IsOptional } from 'class-validator';
+import { IsEnum, IsOptional, IsUUID } from 'class-validator';
 import { PaginationRequest } from 'libs/common/pagination/pagination.request';
 import { Union } from 'src/common/type/common.interface';
+import { User } from 'src/entities/user/user.entity';
 
 export const SortOption = {
   ASC: 'asc',
@@ -9,6 +10,9 @@ export const SortOption = {
 export type SortOption = Union<typeof SortOption>;
 
 export class GetChatsQuery extends PaginationRequest {
+  @IsUUID()
+  userId: User['id'];
+
   @IsOptional()
   @IsEnum(SortOption)
   sortOption: SortOption = SortOption.DESC;
