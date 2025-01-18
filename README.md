@@ -48,13 +48,19 @@ JWT_REFRESH_TOKEN_EXPIRES_IN=14d
 OPENAI_API_KEY=키를 입력해주세요
 ```
 
-3. 서버 실행
+3. Dependencies 설치
+
+```
+npm install
+```
+
+4. 서버 실행
 
 ```
 npm run start:local
 ```
 
-4. docker-compose 중지
+5. docker-compose 중지
 
 ```
 npm run docker:down:local
