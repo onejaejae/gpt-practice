@@ -12,6 +12,8 @@ export class Thread extends UuidEntity {
   @JoinColumn({ name: 'user_id' })
   User: User;
 
-  @OneToMany(() => ChatHistory, (chatHistory) => chatHistory.Thread)
+  @OneToMany(() => ChatHistory, (chatHistory) => chatHistory.Thread, {
+    cascade: true,
+  })
   ChatHistories: ChatHistory[];
 }
