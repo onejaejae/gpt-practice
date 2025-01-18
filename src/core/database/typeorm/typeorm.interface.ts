@@ -29,8 +29,7 @@ export type OmitNotJoinedProps<T, R extends FindOptionsRelations<T>> = {
     : T[K];
 };
 
-export const LockModeType = {
+export const LockMode = {
   PessimisticWrite: 'pessimistic_write',
-  PessimisticRead: 'pessimistic_read',
 } as const;
-export type LockModeType = Union<typeof LockModeType>;
+export type LockMode = Union<typeof LockMode>;

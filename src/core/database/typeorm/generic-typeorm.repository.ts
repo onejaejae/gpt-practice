@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import {
   EntityManager,
   EntityTarget,
@@ -10,19 +10,12 @@ import {
   QueryRunner,
   Repository,
 } from 'typeorm';
-import { GenericRepository } from '../generic/generic.repository';
 import { UuidEntity } from './base.entity';
-import {
-  LockModeType,
-  OmitNotJoinedProps,
-  OmitUppercaseProps,
-} from './typeorm.interface';
+import { OmitNotJoinedProps, OmitUppercaseProps } from './typeorm.interface';
 
-@Injectable()
-export abstract class GenericTypeOrmRepository<T extends UuidEntity>
-  extends Repository<T>
-  implements GenericRepository<T>
-{
+export class GenericTypeOrmRepository<
+  T extends UuidEntity,
+> extends Repository<T> {
   constructor(
     target: EntityTarget<T>,
     manager: EntityManager,
@@ -34,11 +27,13 @@ export abstract class GenericTypeOrmRepository<T extends UuidEntity>
   async findOneWithOmitNotJoinedProps<R extends FindOptionsRelations<T>>(
     filters: FindOptionsWhere<T> | FindOptionsWhere<T>[],
     findOptionsRelations: R,
+    orderOptions?: FindOptionsOrder<T>,
     withDeleted?: boolean,
   ): Promise<OmitNotJoinedProps<T, R> | null> {
     const findOption: FindOneOptions = {
       where: filters,
       relations: findOptionsRelations,
+      order: orderOptions,
       withDeleted,
     };
     const res = await this.findOne(findOption);
@@ -64,16 +59,13 @@ export abstract class GenericTypeOrmRepository<T extends UuidEntity>
   }
 
   async findOneByFilters(
-    filters: FindOptionsWhere<T> | FindOptionsWhere<T>[],
-    lockMode?: LockModeType,
-  ): Promise<OmitUppercaseProps<T>> {
+    filters: FindOptionsWhere<T>,
+    orderOptions?: FindOptionsOrder<T>,
+  ): Promise<OmitUppercaseProps<T> | null> {
     const findOption: FindOneOptions = {
       where: filters,
+      order: orderOptions,
     };
-
-    if (lockMode) {
-      findOption.lock = { mode: lockMode };
-    }
 
     const res = await this.findOne(findOption);
     return res;
@@ -85,18 +77,24 @@ export abstract class GenericTypeOrmRepository<T extends UuidEntity>
   }
 
   async findMany(
-    filters: FindOptionsWhere<T> | FindOptionsWhere<T>[],
+    filters: FindOptionsWhere<T>,
+    orderOptions?: FindOptionsOrder<T>,
   ): Promise<OmitUppercaseProps<T[]>> {
     const findOption: FindManyOptions = {
       where: filters,
+      order: orderOptions,
     };
     const res = await this.find(findOption);
     return res;
   }
 
-  async findOneOrThrow(filters: Partial<T>): Promise<OmitUppercaseProps<T>> {
+  async findOneOrThrow(
+    filters: Partial<T>,
+    orderOptions?: FindOptionsOrder<T>,
+  ): Promise<OmitUppercaseProps<T>> {
     const findOption: FindOneOptions = {
       where: filters,
+      order: orderOptions,
     };
     const res = await this.findOne(findOption);
 

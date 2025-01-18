@@ -8,7 +8,7 @@ import { TypeOrmModule } from './database/typeorm/typeorm.module';
 import { GptModule } from './gpt/gpt.module';
 
 const modules = [ConfigModule, JWTModule, GptModule];
-const providers = [];
+const providers: ClassProvider[] = [];
 const interceptors: ClassProvider[] = [
   { provide: APP_INTERCEPTOR, useClass: ApiResponseInterceptor },
   { provide: APP_INTERCEPTOR, useClass: ErrorInterceptor },

@@ -5,29 +5,31 @@ export const configurations = (): Configurations => {
 
   return {
     APP: {
-      BASE_URL: process.env.BASE_URL,
+      BASE_URL: process.env.BASE_URL || '',
       PORT: process.env.PORT || 3000,
       NODE_ENV: process.env.NODE_ENV || 'local',
       ENV: env,
     },
     DB: {
-      DB_HOST: process.env.DB_HOST,
-      DB_USER_NAME: process.env.DB_USER_NAME,
-      DB_PASSWORD: process.env.DB_PASSWORD,
-      DB_DATABASE: process.env.DB_DATABASE,
+      DB_HOST: process.env.DB_HOST || '',
+      DB_USER_NAME: process.env.DB_USER_NAME || '',
+      DB_PASSWORD: process.env.DB_PASSWORD || '',
+      DB_DATABASE: process.env.DB_DATABASE || '',
       DB_PORT: process.env.DB_PORT || 5432,
     },
     EMAIL: {
-      EMAIL_USER: process.env.EMAIL_USER,
-      EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
+      EMAIL_USER: process.env.EMAIL_USER || '',
+      EMAIL_PASSWORD: process.env.EMAIL_PASSWORD || '',
     },
     JWT: {
-      JWT_SECRET: process.env.JWT_SECRET,
-      JWT_ACCESS_TOKEN_EXPIRES_IN: process.env.JWT_ACCESS_TOKEN_EXPIRES_IN,
-      JWT_REFRESH_TOKEN_EXPIRES_IN: process.env.JWT_REFRESH_TOKEN_EXPIRES_IN,
+      JWT_SECRET: process.env.JWT_SECRET || '',
+      JWT_ACCESS_TOKEN_EXPIRES_IN:
+        process.env.JWT_ACCESS_TOKEN_EXPIRES_IN || '',
+      JWT_REFRESH_TOKEN_EXPIRES_IN:
+        process.env.JWT_REFRESH_TOKEN_EXPIRES_IN || '',
     },
     OPEN_AI: {
-      OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+      OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
     },
   };
 };
