@@ -3,27 +3,30 @@ import { GptService } from 'src/core/gpt/gpt.service';
 import { User } from 'src/entities/user/user.entity';
 import { CreateChatBody } from './req/createChat.body';
 import { GetChatsQuery } from './req/getChats.query';
-import { UserRepository } from '../user/repository/user.repository';
+import { Thread } from 'src/entities/thread/thread.entity';
+import { ThreadRepository } from '../thread/repository/thread.repository';
 
 @Injectable()
 export class ChatService {
   constructor(
     private readonly gptService: GptService,
-    private readonly userRepository: UserRepository,
+    private readonly threadRepository: ThreadRepository,
   ) {}
 
-  async getChats(userId: User['id'], query: GetChatsQuery) {
-    return this.userRepository.paginateWithJoin(
+  async getChats(
+    userId: User['id'],
+    threadId: Thread['id'],
+    query: GetChatsQuery,
+  ) {
+    return this.threadRepository.paginateWithJoin(
       query,
       {
-        Threads: {
-          ChatHistories: true,
-        },
+        ChatHistories: true,
       },
       {
-        id: userId,
+        id: threadId,
       },
-      { Threads: { ChatHistories: { createdAt: query.sortOption } } },
+      { ChatHistories: { createdAt: query.sortOption } },
     );
   }
 

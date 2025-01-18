@@ -21,6 +21,12 @@ export default class UserSeeder implements Seeder {
         name: 'test2',
         role: UserRole.Admin,
       },
+      {
+        email: 'test3@test.com',
+        password: await Encrypt.createHash('test'),
+        name: 'test3',
+        role: UserRole.User,
+      },
     ];
 
     // Create entity instances

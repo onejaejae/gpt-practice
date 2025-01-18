@@ -48,8 +48,6 @@ export class SaveChatHistoryAspect {
       content: 'You are a helpful assistant.',
     });
 
-    console.log('systemMessage---', systemMessage);
-
     thread.ChatHistories = [systemMessage];
     return this.threadRepository.save(thread);
   }
@@ -74,32 +72,26 @@ export class SaveChatHistoryAspect {
 
   wrap(params: WrapParams<any, SaveChatHistoryMetadata>) {
     return async (...args: any[]) => {
-      try {
-        const { method, metadata } = params;
+      const { method, metadata } = params;
 
-        const prompt = args.at(metadata.targetPromptIndex ?? 0);
-        const userId = args.at(metadata.targetUserIdIndex ?? 0);
+      const prompt = args.at(metadata.targetPromptIndex ?? 0);
+      const userId = args.at(metadata.targetUserIdIndex ?? 0);
 
-        const thread = await this.getOrCreateThread(userId);
-        const result = await method(...args);
+      const thread = await this.getOrCreateThread(userId);
+      const result = await method(...args);
 
-        await this.chatHistoryService.saveMessage(
-          thread.id,
-          ChatHistoryRole.User,
-          prompt,
-        );
-        await this.chatHistoryService.saveMessage(
-          thread.id,
-          ChatHistoryRole.Assistant,
-          result,
-        );
+      await this.chatHistoryService.saveMessage(
+        thread.id,
+        ChatHistoryRole.User,
+        prompt,
+      );
+      await this.chatHistoryService.saveMessage(
+        thread.id,
+        ChatHistoryRole.Assistant,
+        result,
+      );
 
-        return result;
-      } catch (error) {
-        console.log('error', error);
-
-        throw error;
-      }
+      return result;
     };
   }
 }
