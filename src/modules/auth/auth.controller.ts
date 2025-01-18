@@ -6,16 +6,16 @@ import { SignUpBody } from './dto/req/signUp.body';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly service: AuthService) {}
 
   @Post('/signup')
   async signUp(@Body() body: SignUpBody): Promise<User> {
-    return this.authService.signUp(body);
+    return this.service.signUp(body);
   }
 
   @Post('/signin')
   async signIn(@Body() body: SignInBody) {
-    const accessToken = await this.authService.signIn(body);
+    const accessToken = await this.service.signIn(body);
 
     return { accessToken };
   }
